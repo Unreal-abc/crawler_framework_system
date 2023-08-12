@@ -66,7 +66,45 @@ const textContent2 = document.body.textContent;
 console.log(textContent2);
 
 ////////////////////////
-var data=[]
+function removeElement() {
+    document.querySelectorAll("div.mdCard").forEach(function name(params) {
+        params.remove()
+    })
+    // document.querySelector("div#commentWrapper").remove()
+}
+function traverseToRemoveElements(element) {
+// 检查类名是否包含 "index_content"
+    for (const className of element.classList) {
+        /////////////////////////
+        if (className.includes("index_content")) {
+            element.remove();
+            continue
+        }
+        ////////////////
+        if (className.includes("index_recommendsWrap")) {
+            element.remove();
+            continue
+        }
+        ////////////////
+        if (className.includes("commentWrapper")) {
+            element.remove();
+            continue
+        }
+        ////////////////
+        if (className.includes("index_headerfixed")) {
+            element.remove();
+            continue
+        }
+    }
+    const children = element.children;
+    for (let i = 0; i < children.length; i++) {
+        traverseToRemoveElements(children[i]);
+    }
+}
+removeElement()
+// 启动遍历，从根元素开始
+traverseToRemoveElements(document.documentElement);
+var data = []
 function trimSpecial(string) {
     //替换字符串中的所有特殊字符（包含空格）
     if (string != "") {
@@ -81,12 +119,12 @@ function traverseElements(element) {
     if (element.children.length === 0 && tagName === "p" || tagName.startsWith("h") && tagName.length === 2) {
         text = trimSpecial(element.textContent.trim());
         if (text !== '' && text.length >= 3) {
-            data.push({"文本":text})
+            data.push({"文本": text})
             // console.log('文本:', text);
         }
     } else {
         if (tagName === "img") {
-            data.push({"pic":element.src})
+            data.push({"pic": element.src})
         } else {
             // 递归遍历当前元素的子元素
             const children = element.children;
@@ -97,6 +135,7 @@ function traverseElements(element) {
 
     }
 }
+
 // 启动遍历，从根元素开始
 traverseElements(document.documentElement);
 console.log(data)
@@ -114,3 +153,44 @@ function trimSpecial(string) {
 
 str_ = "这是一个带有非书写符号的字符串！@#它包含&*多个特殊字符。";
 console.log(trimSpecial(str_))
+
+
+///////////////////////////////////////
+function removeElement() {
+    document.querySelectorAll("div.mdCard").forEach(function name(params) {
+        params.remove()
+    })
+    document.querySelector("div#commentWrapper").remove()
+}
+function traverseToRemoveElements(element) {
+// 检查类名是否包含 "index_content"
+    for (const className of element.classList) {
+        /////////////////////////
+        if (className.includes("index_content")) {
+            element.remove();
+            continue
+        }
+        ////////////////
+        if (className.includes("index_recommendsWrap")) {
+            element.remove();
+            continue
+        }
+        ////////////////
+        if (className.includes("commentWrapper")) {
+            element.remove();
+            continue
+        }
+        ////////////////
+        if (className.includes("index_headerfixed")) {
+            element.remove();
+            continue
+        }
+    }
+    const children = element.children;
+    for (let i = 0; i < children.length; i++) {
+        traverseToRemoveElements(children[i]);
+    }
+}
+removeElement()
+// 启动遍历，从根元素开始
+traverseToRemoveElements(document.documentElement);
