@@ -1,51 +1,77 @@
-from PySide6.QtWidgets import QApplication, QMainWindow, QTextEdit, QPushButton, QVBoxLayout, QWidget
-from PySide6.QtCore import QUrl
-from PySide6.QtWebEngineWidgets import QWebEngineView
+import qdarkstyle
+from PySide6.QtUiTools import *
+from PySide6.QtWidgets import *
+from PySide6.QtCore import *
+from PySide6.QtWebEngineWidgets import *
 
 
-class MainWindow(QMainWindow):
+class MainWindow():
+    taskName = ""
+    numberOfThreads = 0
+    listOfTasksToBeAssigned = []
+    taskList = []
+
     def __init__(self):
         super().__init__()
-
-        # 创建文本编辑框和执行按钮
-        self.text_edit = QTextEdit()
-        self.text_edit.setPlaceholderText('在这里输入JavaScript...')
-        self.run_button = QPushButton("Run Script")
-        self.run_button.clicked.connect(self.run_script)
-
-        # 创建布局并添加部件
-        layout = QVBoxLayout()
-        layout.addWidget(self.text_edit)
-        layout.addWidget(self.run_button)
-
-        # 创建主窗口部件，并设置布局
-        central_widget = QWidget()
-        central_widget.setLayout(layout)
-        self.setCentralWidget(central_widget)
-
-        # 创建QWebEngineView并加载网页
-        self.web_view = QWebEngineView()
-        layout.addWidget(self.web_view)
-        self.web_view.load(QUrl("https://www.thepaper.cn/channel_25950"))
-
-        # 连接下载请求信号
-        self.web_view.page().profile().downloadRequested.connect(self.on_download_requested)
-
-        # 设置主窗口标题和尺寸
-        self.setWindowTitle("WebEngine Download Example")
-        self.resize(800, 600)
+        self.ui = QUiLoader().load('通用爬虫.ui')
+        self.readConfigurationItems()
+        self.ui.setWindowTitle("WebEngine Download Example")
+        self.ui.resize(800, 600)
 
     def run_script(self):
-        # 获取文本编辑器的内容
-        script = self.text_edit.toPlainText()
+        self.web_view.page().runJavaScript(self.text_edit.toPlainText())
 
-        # 在QWebEngineView中执行JavaScript代码
-        self.web_view.page().runJavaScript(script)
+    def readConfigurationItems(self):
+        import xml.etree.ElementTree as ET
+        tree = ET.parse('task.xml')
+        root = tree.getroot()
+        ############################
+        taskName = root.find('taskName')
+        if taskName is not None:
+            self.taskName = taskName.text.strip()
+            self.ui.taskName.setText(self.taskName)
+        else:
+            QApplication.quit()
+        ############################
+        numberOfThreads = root.find('numberOfThreads')
+        if numberOfThreads is not None:
+            self.numberOfThreads = numberOfThreads.text.strip()
+            self.ui.numberOfThreads.setText(self.numberOfThreads)
+        else:
+            QApplication.quit()
+        ############################
+        taskScript = root.find('taskScript')
+        if taskScript is not None:
+            self.taskScript = taskScript.text.strip()
+            self.ui.script.setText(self.taskScript)
+        else:
+            QApplication.quit()
+        ############################
+        elements = root.find('taskURLs').findall("url")
+        if elements is None:
+            QApplication.quit()
+        index = 1
+        for element in elements:
+            if 'status' not in element.attrib:
+                # 如果不存在status属性，则添加
+                element.set('status', "1")
+            if element.get('status') == "1":
+                self.listOfTasksToBeAssigned.append({
+                    "id": index,
+                    "url": element.text.strip()
+                })
+            index = index + 1
+        tree.write('task.xml')
+        print(self.listOfTasksToBeAssigned)
 
+    def assignTasks(self):
+        for i in range(self.numberOfThreads):
+            self.taskList.append(set())
 
 
 if __name__ == "__main__":
     app = QApplication([])
+    app.setStyleSheet(qdarkstyle.load_stylesheet(qt_api='pyside6'))
     window = MainWindow()
-    window.show()
+    window.ui.show()
     app.exec()

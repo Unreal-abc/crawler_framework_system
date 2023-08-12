@@ -1,0 +1,65 @@
+<task>
+    <taskName>
+        &#35835;&#21462;URL
+    </taskName>
+    <numberOfThreads>
+        8
+    </numberOfThreads>
+    <taskScript>
+var data = []
+document
+    .querySelectorAll("div.ant-row")
+    .forEach(function (a) {
+        // console.log(a)
+        a.querySelectorAll("div.ant-col")
+            .forEach(function (b) {
+                // console.log(b)
+                link = b.querySelector("a")
+                &#30446;&#26631;&#22320;&#22336; = link.href
+                pic = link.querySelector("img")
+                &#22270;&#29255;&#22320;&#22336; = "null"
+                if (pic) {
+                    &#22270;&#29255;&#22320;&#22336; = pic.getAttribute("src")
+                }
+                title = link.querySelector("h2")
+                &#26631;&#39064; = "null"
+                if (title) {
+                    &#26631;&#39064; = title.textContent
+                }
+                data.push({
+                    "&#30446;&#26631;&#22320;&#22336;": &#30446;&#26631;&#22320;&#22336;,
+                    "&#22270;&#29255;&#22320;&#22336;": &#22270;&#29255;&#22320;&#22336;,
+                    "&#26631;&#39064;": &#26631;&#39064;
+                })
+            })
+    })
+// console.log(data)
+// &#21019;&#24314;&#19968;&#20010;&#21253;&#21547;&#35201;&#20889;&#20837;&#30340;&#23383;&#31526;&#20018;&#30340; Blob &#23545;&#35937;
+const content = JSON.stringify(data);
+const blob = new Blob([content], {type: 'text/plain'});
+
+// &#21019;&#24314;&#19968;&#20010;&#19979;&#36733;&#38142;&#25509;&#65292;&#24182;&#35774;&#32622;&#30456;&#20851;&#23646;&#24615;
+const downloadLink = document.createElement('a');
+downloadLink.href = URL.createObjectURL(blob);
+// &#33719;&#21462;&#24403;&#21069;&#26102;&#38388;
+const currentDate = new Date();
+const timestamp = currentDate.toISOString().replace(/:/g, '-').substring(0, 19);
+// &#33719;&#21462;&#32593;&#39029;&#26631;&#39064;
+const pageTitle = document.title;
+// &#25340;&#25509;&#25991;&#20214;&#21517;
+const fileName = `${pageTitle}_${timestamp}.txt`;
+downloadLink.download = fileName;
+// &#35302;&#21457;&#19979;&#36733;&#38142;&#25509;
+downloadLink.click();
+// &#28165;&#29702;&#21019;&#24314;&#30340; URL &#23545;&#35937;
+URL.revokeObjectURL(downloadLink.href);
+    </taskScript>
+    <taskURLs>
+        <url status="2">
+https://poe.com/ChatGPT
+        </url>
+        <url status="1">
+https://666
+        </url>
+    </taskURLs>
+</task>
