@@ -3,13 +3,14 @@
 currentURL = window.location.href
 if (currentURL.includes("thepaper")) {
     元素 = "div.index_wrapper__L_zqV"
-} else if (currentURL.includes("chinanews")) {
-    元素 = "div.content_maincontent_more"
-} else if (currentURL.includes("sina")) {
-    元素 = "div.article"
-} else if (currentURL.includes("news.cn")) {
-    元素 = "div#detail"
 }
+// else if (currentURL.includes("chinanews")) {
+//     元素 = "div.content_maincontent_more"
+// } else if (currentURL.includes("sina")) {
+//     元素 = "div.article"
+// } else if (currentURL.includes("news.cn")) {
+//     元素 = "div#detail"
+// }
 var divElement = document.querySelector(元素);
 while (divElement.parentNode) {
     divElement = divElement.parentNode;
@@ -49,7 +50,18 @@ function trimSpecial(string) {
 
 function traverseElements(element) {
     var tagName = element.tagName.toLowerCase();
-    if (element.children.length === 0 && tagName === "p" && element.hasAttribute("doNotRemove") || tagName.startsWith("h") && tagName.length === 2 && element.hasAttribute("doNotRemove")) {
+    if (element.children.length === 0 && tagName === "p" && element.hasAttribute("doNotRemove")) {
+        text = trimSpecial(element.textContent.trim());
+        if (text !== '' && text.length >= 3) {
+            data.push({"文本": text})
+        }
+    }
+    if (element.children.length === 0 && tagName === "strong" && element.hasAttribute("doNotRemove")) {
+        text = trimSpecial(element.textContent.trim());
+        if (text !== '' && text.length >= 3) {
+            data.push({"文本": text})
+        }
+    } else if (tagName.startsWith("h") && tagName.length === 2 && element.hasAttribute("doNotRemove")) {
         text = trimSpecial(element.textContent.trim());
         if (text !== '' && text.length >= 3) {
             data.push({"文本": text})
