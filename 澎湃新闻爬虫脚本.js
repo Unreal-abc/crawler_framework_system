@@ -35,7 +35,7 @@ document
 // console.log(data)
 // 创建一个包含要写入的字符串的 Blob 对象
 const content = JSON.stringify(data);
-const blob = new Blob([content], { type: 'text/plain' });
+const blob = new Blob([content], {type: 'text/plain'});
 
 // 创建一个下载链接，并设置相关属性
 const downloadLink = document.createElement('a');
@@ -52,3 +52,65 @@ downloadLink.download = fileName;
 downloadLink.click();
 // 清理创建的 URL 对象
 URL.revokeObjectURL(downloadLink.href);
+
+
+/////////////////////////////////////////////////////////////////////////////////
+
+
+//获取网页文本
+// 使用 document.body.innerText
+const textContent1 = document.body.innerText;
+console.log(textContent1);
+// 使用 document.body.textContent
+const textContent2 = document.body.textContent;
+console.log(textContent2);
+
+////////////////////////
+var data=[]
+function trimSpecial(string) {
+    //替换字符串中的所有特殊字符（包含空格）
+    if (string != "") {
+        const pattern = /[`~!@#$^\-&*()=|{}'',\\\[\]\.<>\/?~@#￥……&*（）——|{}【】\s]/g;
+        string = string.replace(pattern, "");
+    }
+    return string
+}
+
+function traverseElements(element) {
+    var tagName = element.tagName.toLowerCase();
+    if (element.children.length === 0 && tagName === "p" || tagName.startsWith("h") && tagName.length === 2) {
+        text = trimSpecial(element.textContent.trim());
+        if (text !== '' && text.length >= 3) {
+            data.push({"文本":text})
+            // console.log('文本:', text);
+        }
+    } else {
+        if (tagName === "img") {
+            data.push({"pic":element.src})
+        } else {
+            // 递归遍历当前元素的子元素
+            const children = element.children;
+            for (let i = 0; i < children.length; i++) {
+                traverseElements(children[i]);
+            }
+        }
+
+    }
+}
+// 启动遍历，从根元素开始
+traverseElements(document.documentElement);
+console.log(data)
+
+////////////////////////////
+//去除特殊字符~!@#$^-&*()=|{}':;',\[].<>/?~！@#￥……&*（）——|{}【】'；：""'。，、？
+function trimSpecial(string) {
+    //替换字符串中的所有特殊字符（包含空格）
+    if (string != "") {
+        const pattern = /[`~!@#$^\-&*()=|{}'',\\\[\]\.<>\/?~@#￥……&*（）——|{}【】\s]/g;
+        string = string.replace(pattern, "");
+    }
+    return string
+}
+
+str_ = "这是一个带有非书写符号的字符串！@#它包含&*多个特殊字符。";
+console.log(trimSpecial(str_))
