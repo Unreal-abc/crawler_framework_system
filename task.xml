@@ -55,7 +55,7 @@ downloadLink.click();
 URL.revokeObjectURL(downloadLink.href);
     </taskScript>
     <taskURLs>
-        <url status="2">
+        <url status="1">
 https://poe.com/ChatGPT
         </url>
         <url status="1">
